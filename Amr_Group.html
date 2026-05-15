@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMR SALAH | 3MR SOLUTIONS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <style>
+        :root { --p: #00f2ff; --s: #ff9d00; --bg: #050505; --card: #111; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Cairo', sans-serif; }
+        body { background: var(--bg); color: #fff; line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* Nav */
+        nav { padding: 15px 8%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.9); position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,242,255,0.2); backdrop-filter: blur(10px); }
+        .logo { font-size: 22px; font-weight: 900; color: var(--p); letter-spacing: 1px; }
+
+        /* Hero */
+        .hero { min-height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 8% 40px; }
+        .hero img { width: 170px; height: 170px; border-radius: 50%; border: 3px solid var(--p); box-shadow: 0 0 25px rgba(0,242,255,0.3); object-fit: cover; margin-bottom: 20px; }
+        .hero h1 { font-size: 3rem; font-weight: 900; margin-bottom: 10px; }
+        .hero p { color: #aaa; max-width: 700px; font-size: 1.1rem; }
+
+        /* شريط اللغات الشفاف */
+        .tech-slider { background: rgba(255,255,255,0.03); padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; white-space: nowrap; backdrop-filter: blur(5px); }
+        .tech-track { display: inline-block; animation: scroll 20s linear infinite; color: var(--p); font-weight: bold; }
+        .tech-track span { margin: 0 35px; font-size: 0.9rem; }
+        @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+
+        /* الخدمات */
+        .services-detail { padding: 80px 8%; background: #0a0a0a; }
+        .title-main { text-align: center; font-size: 2.3rem; margin-bottom: 50px; color: var(--p); }
+        .desc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .desc-card { background: var(--card); padding: 35px; border-radius: 20px; border-right: 4px solid var(--s); transition: 0.3s; }
+        .desc-card:hover { transform: translateY(-5px); border-right-color: var(--p); }
+        .desc-card i { font-size: 40px; color: var(--s); margin-bottom: 15px; }
+        .desc-card h3 { margin-bottom: 15px; font-size: 1.5rem; }
+        .desc-card p { color: #ccc; font-size: 0.95rem; text-align: justify; }
+
+        /* الثقة */
+        .trust-section { padding: 80px 8%; text-align: center; }
+        .trust-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .trust-box { padding: 20px; border: 1px solid #222; border-radius: 15px; background: #080808; }
+        .trust-box h2 { color: var(--p); font-size: 2rem; margin-bottom: 5px; }
+
+        /* قصص النجاح */
+        .success { padding: 80px 8%; background: #080808; }
+        .stories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .story-card { background: var(--card); padding: 30px; border-radius: 15px; border-bottom: 3px solid var(--p); }
+
+        /* Portfolio */
+        .portfolio { padding: 80px 8%; }
+        .p-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .p-card { background: #161616; border-radius: 12px; padding: 25px; border: 1px solid #222; text-align: center; }
+        .p-link { color: var(--s); text-decoration: none; font-weight: bold; }
+
+        /* Form */
+        .contact { padding: 60px 8%; max-width: 750px; margin: 0 auto; }
+        .form-box { background: var(--card); padding: 40px; border-radius: 25px; }
+        input, select, textarea { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
+        .btn { width: 100%; padding: 16px; background: var(--p); color: #000; font-weight: 900; border: none; border-radius: 10px; cursor: pointer; font-size: 1.1rem; }
+
+        /* WhatsApp */
+        .wa { position: fixed; bottom: 25px; left: 25px; background: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #fff; z-index: 999; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+
+        /* --- Admin Dashboard Styles --- */
+        footer { text-align:center; padding: 60px 40px; background: #000; border-top:1px solid #111; position: relative; }
+        .copyright-text { color: #555; font-size: 1rem; margin-bottom: 15px; display: block; }
+        .admin-trigger-btn { background: rgba(0, 242, 255, 0.05); color: #333; padding: 8px 20px; border-radius: 50px; text-decoration: none; font-size: 0.8rem; border: 1px solid #222; transition: 0.3s; cursor: pointer; }
+        .admin-trigger-btn:hover { background: var(--p); color: #000; border-color: var(--p); box-shadow: 0 0 15px rgba(0, 242, 255, 0.3); }
+
+        .admin-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); overflow-y: auto; padding: 40px 15px; }
+        .admin-content { max-width: 1000px; margin: auto; background: #0f0f0f; padding: 30px; border-radius: 20px; border: 1px solid #222; position: relative; }
+        .close-admin { position: absolute; left: 20px; top: 20px; color: #ff4444; font-size: 25px; cursor: pointer; }
+        .admin-table-container { overflow-x: auto; margin-top: 30px; }
+        .admin-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .admin-table th { background: var(--p); color: #000; padding: 15px; text-align: right; }
+        .admin-table td { padding: 15px; border-bottom: 1px solid #222; color: #ddd; font-size: 0.9rem; }
+        .btn-wa-admin { background: #25d366; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">AMR SALAH</div>
+        <div class="social">
+            <a href="https://www.facebook.com/amrviro125" style="color:#fff; margin-left:15px;"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.tiktok.com/@amr1510official" style="color:#fff"><i class="fab fa-tiktok"></i></a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <img src="https://i.ibb.co/gLh4WrgP/image.jpg" alt="Amr Salah">
+        <h1>AMR SALAH</h1>
+        <p>نبتكر الحلول البرمجية ونقود الحملات التسويقية التي تصنع الفارق الحقيقي لمشروعك.</p>
+    </section>
+
+    <div class="tech-slider">
+        <div class="tech-track">
+            <span>JAVASCRIPT</span> <span>PYTHON</span> <span>REACT.JS</span> <span>FIREBASE</span> 
+            <span>NODE.JS</span> <span>PHP</span> <span>MYSQL</span> <span>FACEBOOK ADS</span> 
+            <span>GOOGLE ADS</span> <span>UI/UX DESIGN</span>
+        </div>
+    </div>
+
+    <section class="services-detail">
+        <h2 class="title-main">خدماتنا الاحترافية</h2>
+        <div class="desc-grid">
+            <div class="desc-card">
+                <i class="fas fa-laptop-code"></i>
+                <h3>برمجة الأنظمة المخصصة</h3>
+                <p>نقوم ببناء منصات تعليمية، تطبيقات شات، وأنظمة إدارة (CRM) متكاملة مصممة خصيصاً لتناسب احتياجات عملك.</p>
+            </div>
+            <div class="desc-card">
+                <i class="fas fa-bullhorn"></i>
+                <h3>التسويق الرقمي الذكي</h3>
+                <p>ندرس جمهورك بدقة لنصمم حملات ممولة تحقق أعلى معدلات التحويل بأقل تكلفة ممكنة.</p>
+            </div>
+            <div class="desc-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>استشارات نمو البيزنس</h3>
+                <p>نحلل أداء مشروعك الحالي ونضع خططاً استراتيجية لتحويل علامتك التجارية إلى "براند" موثوق.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="trust-section">
+        <h2 class="title-main">لماذا يثق بنا العملاء؟</h2>
+        <div class="trust-grid">
+            <div class="trust-box"><h2>+2500</h2><p>عميل ومستخدم</p></div>
+            <div class="trust-box"><h2>100%</h2><p>دعم فني حقيقي</p></div>
+            <div class="trust-box"><h2>+50</h2><p>مشروع مكتمل</p></div>
+            <div class="trust-box"><h2>6x</h2><p>عائد مبيعات متوقع</p></div>
+        </div>
+    </section>
+
+    <section class="success">
+        <h2 class="title-main">قصص نجاح 3MR</h2>
+        <div class="stories-grid">
+            <div class="story-card">
+                <h3>طفرة التعليم الإلكتروني</h3>
+                <p>منصة 3MR Academy استوعبت آلاف الطلاب وحولت العملية التعليمية لنمط رقمي بالكامل.</p>
+            </div>
+            <div class="story-card">
+                <h3>نجاح التجارة الإلكترونية</h3>
+                <p>ساعدنا عدة متاجر في الانطلاق من الصفر للوصول لأول 1000 أوردر شهرياً عبر القمع البيعي.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="portfolio">
+        <h2 class="title-main">مشاريع حية</h2>
+        <div class="p-grid">
+            <div class="p-card"><h4>3MR Academy</h4><a href="https://3mrschool15102009.netlify.app/" class="p-link" target="_blank">زيارة <i class="fas fa-external-link-alt"></i></a></div>
+            <div class="p-card"><h4>3MR Chat</h4><a href="https://3mrsalahchat.netlify.app/" class="p-link" target="_blank">زيارة <i class="fas fa-external-link-alt"></i></a></div>
+            <div class="p-card"><h4>Cap. Amr</h4><a href="https://capamr125.netlify.app/" class="p-link" target="_blank">زيارة <i class="fas fa-external-link-alt"></i></a></div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="form-box">
+            <h2 style="text-align:center; margin-bottom:20px;">تواصل مباشرة مع AMR SALAH</h2>
+            <form id="final3mrForm">
+                <input type="text" id="name" placeholder="الاسم" required>
+                <input type="tel" id="phone" placeholder="رقم الهاتف" required>
+                <select id="service">
+                    <option>برمجة سيستم تعليمي</option>
+                    <option>إدارة إعلانات ممولة</option>
+                    <option>تطوير موقع بيزنس</option>
+                </select>
+                <textarea id="msg" rows="3" placeholder="رسالتك لعمرو..."></textarea>
+                <button type="submit" class="btn">إرسال لـ 3MR SOLUTIONS</button>
+            </form>
+        </div>
+    </section>
+
+    <a href="https://wa.me/201107545181" class="wa" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+    <footer>
+        <span class="copyright-text">© 2026 3MR Academy | جميع الحقوق محفوظة لعمرو صلاح</span>
+        <button onclick="openAdminPortal()" class="admin-trigger-btn">
+            <i class="fas fa-user-shield"></i> لوحة الإدارة
+        </button>
+    </footer>
+
+    <div id="adminPortal" class="admin-modal">
+        <div class="admin-content">
+            <span class="close-admin" onclick="closeAdminPortal()"><i class="fas fa-times-circle"></i> إغلاق</span>
+            <h2 style="color: var(--p); text-align: center; font-size: 1.8rem; border-bottom: 2px solid var(--p); padding-bottom: 10px;">لوحة تحكم الطلبات - 3MR</h2>
+            
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>الموبايل</th>
+                            <th>الخدمة</th>
+                            <th>التاريخ</th>
+                            <th>تواصل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-tbody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = { databaseURL: "https://amr3j-97309-default-rtdb.firebaseio.com/" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // 1. Send Data from Form
+        document.getElementById('final3mrForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                service: document.getElementById('service').value,
+                msg: document.getElementById('msg').value,
+                date: new Date().toLocaleString()
+            };
+            db.ref('users').push(data).then(() => {
+                alert('البيانات وصلت يا بطل! عمرو صلاح هيرد عليك فوراً.');
+                this.reset();
+            });
+        });
+
+        // 2. Admin Portal Logic
+        function openAdminPortal() {
+            const pass = prompt("من فضلك أدخل كلمة سر المدير المكونة من 8 أرقام:");
+            if (pass === "15102009") {
+                document.getElementById('adminPortal').style.display = "block";
+                document.body.style.overflow = "hidden"; // منع السكرول خلف المودال
+                loadOrders();
+            } else if (pass !== null) {
+                alert("كلمة السر خاطئة! الدخول للمصرح لهم فقط.");
+            }
+        }
+
+        function closeAdminPortal() {
+            document.getElementById('adminPortal').style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+
+        // 3. Load Data into Admin Table
+        function loadOrders() {
+            db.ref('users').on('value', (snapshot) => {
+                const tbody = document.getElementById('admin-tbody');
+                tbody.innerHTML = "";
+                snapshot.forEach((childSnapshot) => {
+                    const val = childSnapshot.val();
+                    const row = `
+                        <tr>
+                            <td>${val.name}</td>
+                            <td>${val.phone}</td>
+                            <td>${val.service}</td>
+                            <td>${val.date || '---'}</td>
+                            <td>
+                                <a href="https://wa.me/${val.phone}" target="_blank" class="btn-wa-admin">
+                                    <i class="fab fa-whatsapp"></i> واتساب
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
